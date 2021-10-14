@@ -8,7 +8,7 @@ class Server{
     constructor(){
         this.app = express();
         this.port = process.env.PORT;
-
+        this.usuariosPath = '/api/usuarios';
 
         // middlewares
         this.middlewares();
@@ -30,39 +30,7 @@ class Server{
     routes(){
 
 
-        this.app.get('/api',  (req, res) => {
-            //res.send('Hello World')
-
-            res.status(200).json({
-                msg: "get Api"
-            });
-
-        })
-        this.app.post('/api',  (req, res) => {
-            //res.send('Hello World')
-
-            res.status(200).json({
-                msg: "post Api"
-            });
-
-        })
-        this.app.put('/api',  (req, res) => {
-            //res.send('Hello World')
-
-            res.status(200).json({
-                msg: "put Api"
-            });
-
-        })
-        this.app.delete('/api',  (req, res) => {
-            //res.send('Hello World')
-
-            res.status(200).json({
-                msg: "delete Api"
-            });
-
-        })
-           
+           this.app.use(this.usuariosPath, require('../routes/usuarios'));
         
 
     }
