@@ -23,6 +23,9 @@ class Server{
         // cors
         this.app.use(cors());
 
+        // lectura parse del body
+        this.app.use(express.json());
+
         // directorio publico
         this.app.use(express.static('public'));
     }
