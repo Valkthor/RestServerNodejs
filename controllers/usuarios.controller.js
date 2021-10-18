@@ -1,5 +1,8 @@
 const { response, request } = require('express');
 
+// se agrega conexion al modelo
+const Usuario = require('../models/usuario');
+
 
 const usuariosGet = (req = request, res = response ) => {
 
@@ -19,13 +22,23 @@ const usuariosGet = (req = request, res = response ) => {
     });
 }
 
-const usuariosPost = (req, res = response) => {
+// se cambia a async
+const usuariosPost = async (req, res = response) => {
 
-    const { nombre, edad } = req.body;
-    //console.log(body);
+    //const { nombre, edad } = req.body;
+    
+    const body = req.body;
+
+    //se obtiene la instancia del modelo y se envia el modelo json
+    // mongo se encargara de guardar solo los datos que coincidan con su esquema.
+    const usuario = new Usuario(body);
+
+    await usuario.save();
+    
+    //console.log(body); 
     res.status(200).json({
         msg: "Post Api controlador",
-        nombre, edad
+        usuario
     });
 }
 
