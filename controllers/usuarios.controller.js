@@ -3,6 +3,10 @@ const { response, request } = require('express');
 // se agrega conexion al modelo
 const Usuario = require('../models/usuario');
 
+// encriptacion de contraseña
+const bcryptjs = require('bcryptjs');
+const { validationResult } = require('express-validator');
+
 
 const usuariosGet = (req = request, res = response ) => {
 
@@ -25,13 +29,33 @@ const usuariosGet = (req = request, res = response ) => {
 // se cambia a async
 const usuariosPost = async (req, res = response) => {
 
+    // validacion de express validator
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+        return res.status(400).json(errors);
+    }
+
     //const { nombre, edad } = req.body;
-    
-    const body = req.body;
+    const { nombre, correo, password, rol } = req.body;
 
     //se obtiene la instancia del modelo y se envia el modelo json
     // mongo se encargara de guardar solo los datos que coincidan con su esquema.
-    const usuario = new Usuario(body);
+    const usuario = new Usuario({
+        nombre, correo, password, rol
+    });
+
+    // validacion de correo existe
+    const existeMail = await Usuario.findOne({ correo });
+    if (existeMail) {
+        return res.status(400).json({
+            msg: "el correo ya esta registrado"
+        });
+    }
+
+
+    // encriptacion contraseña
+    const salt = bcryptjs.genSaltSync();
+    usuario.password = bcryptjs.hashSync(password, salt);
 
     await usuario.save();
     
